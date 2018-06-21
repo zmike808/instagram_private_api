@@ -282,7 +282,7 @@ class UploadEndpointsMixin(object):
             ClientCompatPatch.media(res.get('media'), drop_incompat_keys=self.drop_incompat_keys)
         return res
 
-    def configure_to_reel(self, upload_id, size):
+    def configure_to_reel(self, upload_id, size, **kwargs):
         """
         Finalises a photo story upload. This should not be called directly.
         Use :meth:`post_photo_story` instead.
@@ -296,8 +296,37 @@ class UploadEndpointsMixin(object):
 
         endpoint = 'media/configure_to_story/'
         width, height = size
+        
+        reel_caption = kwargs.pop('reel_caption', '').replace(' ', '+')+'+'
+        tag_name = kwargs.pop('tag_name', None)
+        mention_id = kwargs.pop('mention_id', None)
+        
+        print("reel_caption={} tag_name={} mention_id={} ".format(reel_caption, tag_name, mention_id))
+        story_hashtags = json.dumps(
+        [{
+            'tag_name'         : tag_name, # Hashtag WITHOUT the '#'! NOTE: This hashtag MUST appear in the caption.
+            'x'                : 0.5, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
+            'y'                : 0.5, # Also note that X/Y is setting the position of the CENTER of the clickable area.
+            'width'            : 0.24305555, # Clickable area size, as percentage of image size: 0.0 - 1.0
+            'height'           : 0.07347973, # ...
+            'rotation'         : 0.0,
+            'is_sticker'       : True # Don't change this value.
+        }]);
+        reel_mentions = json.dumps(
+        [{
+            'x'                : 0.5, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
+            'y'                : 0.75, # Also note that X/Y is setting the position of the CENTER of the clickable area.
+            'width'            : 0.44305555, # Clickable area size, as percentage of image size: 0.0 - 1.0
+            'height'           : 0.09347973, # ...
+            'rotation'         : 0.0,
+            'user_id'          : mention_id,
+            'is_sticker'       : True
+        }]);
+            
         params = {
-            'source_type': '4',
+            'caption': reel_caption,
+            'mas_opt_in': 'NOT_PROMPTED',            
+            'source_type': '3',
             'upload_id': upload_id,
             'story_media_creation_date': str(int(time.time()) - randint(11, 20)),
             'client_shared_at': str(int(time.time()) - randint(3, 10)),
@@ -317,7 +346,9 @@ class UploadEndpointsMixin(object):
             'extra': {
                 'source_width': width,
                 'source_height': height,
-            }
+            },
+            #'story_hashtags' : story_hashtags,
+            'reel_mentions' : reel_mentions
         }
         params.update(self.authenticated_params)
         res = self._call_api(endpoint, params=params)
@@ -470,7 +501,7 @@ class UploadEndpointsMixin(object):
         #     logger.debug('Skip photo configure.')
         #     return json_response
         if to_reel:
-            return self.configure_to_reel(upload_id, size)
+            return self.configure_to_reel(upload_id, size, **kwargs)
         else:
             return self.configure(upload_id, size, caption=caption, location=location,
                                   disable_comments=disable_comments, is_sidecar=is_sidecar)
@@ -675,7 +706,7 @@ class UploadEndpointsMixin(object):
                 else:
                     raise
 
-    def post_photo_story(self, photo_data, size):
+    def post_photo_story(self, photo_data, size, **kwargs):
         """
         Upload a photo story
 
@@ -684,7 +715,7 @@ class UploadEndpointsMixin(object):
         :return:
         """
         return self.post_photo(
-            photo_data=photo_data, size=size, to_reel=True)
+            photo_data=photo_data, size=size, to_reel=True, **kwargs)
 
     def post_video_story(self, video_data, size, duration, thumbnail_data):
         """
