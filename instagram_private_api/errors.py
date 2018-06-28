@@ -29,6 +29,15 @@ class ClientError(Exception):
         return self.args[0]
 
 
+class ClientTwoFactorRequiredError(ClientError):
+    """Raised when two factor authentication required"""
+
+    def __init__(self, msg, code=None, error_response='', cookie=None, login_params=None):
+        self.cookie = cookie
+        self.login_params = login_params
+        super(ClientTwoFactorRequiredError, self).__init__(msg, code=code, error_response=error_response)
+
+
 class ClientLoginError(ClientError):
     """Raised when login fails."""
     pass
@@ -95,7 +104,7 @@ class ErrorHandler(object):
     ]
 
     @staticmethod
-    def process(http_error, error_response):
+    def process(http_error, error_response, cookie_jar='', login_params=''):
         """
         Tries to process an error meaningfully
 
@@ -111,6 +120,12 @@ class ErrorHandler(object):
 
         try:
             error_obj = json.loads(error_response)
+
+            if 'two_factor_required' in error_obj and error_obj['two_factor_required']:
+                raise ClientTwoFactorRequiredError(
+                    error_msg, http_error.code, error_response, cookie=cookie_jar, login_params=login_params
+                )
+
             error_message_type = error_obj.get('error_type', '') or error_obj.get('message', '')
             if http_error.code == ClientErrorCodes.TOO_MANY_REQUESTS:
                 raise ClientThrottledError(

@@ -196,10 +196,14 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
             kwargs.pop('ad_id', None) or user_settings.get('ad_id') or
             self.generate_adid())
 
+        verification_code = kwargs.pop('verification_code', None)
+        two_factor_identifier = kwargs.pop('two_factor_identifier', None)
         if not cookie_string:   # [TODO] There's probably a better way than to depend on cookie_string
             if not self.username or not self.password:
                 raise ClientLoginRequiredError('login_required', code=400)
             self.login()
+        elif verification_code and two_factor_identifier:
+            self.login2fa(two_factor_identifier, verification_code)
 
         self.logger.debug('USERAGENT: {0!s}'.format(self.user_agent))
         super(Client, self).__init__()
@@ -517,7 +521,7 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         except compat_urllib_error.HTTPError as e:
             error_response = self._read_response(e)
             self.logger.debug('RESPONSE: {0:d} {1!s}'.format(e.code, error_response))
-            ErrorHandler.process(e, error_response)
+            ErrorHandler.process(e, error_response, self.cookie_jar, params)
 
         except (SSLError, timeout, SocketError,
                 compat_urllib_error.URLError,   # URLError is base of HTTPError
