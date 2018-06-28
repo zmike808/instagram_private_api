@@ -301,7 +301,7 @@ class UploadEndpointsMixin(object):
         tag_name = kwargs.pop('tag_name', None)
         mention_id = kwargs.pop('mention_id', None)
         
-        print("reel_caption={} tag_name={} mention_id={} ".format(reel_caption, tag_name, mention_id))
+        #print("reel_caption={} tag_name={} mention_id={} ".format(reel_caption, tag_name, mention_id))
         story_hashtags = json.dumps(
         [{
             'tag_name'         : tag_name, # Hashtag WITHOUT the '#'! NOTE: This hashtag MUST appear in the caption.
