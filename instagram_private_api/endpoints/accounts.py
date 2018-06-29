@@ -76,17 +76,6 @@ class AccountsEndpointsMixin(object):
     def login2fa(self, identifier, code):
         """Login into account with 2fa enabled."""
 
-        prelogin_params = self._call_api(
-            'si/fetch_headers/',
-            params='',
-            query={'challenge_type': 'signup', 'guid': self.generate_uuid(True)},
-            return_response=True)
-
-        if not self.csrftoken:
-            raise ClientError(
-                'Unable to get csrf from prelogin.',
-                error_response=self._read_response(prelogin_params))
-
         login_params = {
             'device_id': self.device_id,
             'guid': self.uuid,

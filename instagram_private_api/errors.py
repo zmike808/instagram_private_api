@@ -32,9 +32,14 @@ class ClientError(Exception):
 class ClientTwoFactorRequiredError(ClientError):
     """Raised when two factor authentication required"""
 
-    def __init__(self, msg, code=None, error_response='', cookie=None, login_params=None):
-        self.cookie = cookie
-        self.login_params = login_params
+    def __init__(self, msg, code=None, error_response='', settings=''):
+        """
+        :param msg:
+        :param code:
+        :param error_response:
+        :param settings: settings used for authorization == Client.settings
+        """
+        self.settings = settings
         super(ClientTwoFactorRequiredError, self).__init__(msg, code=code, error_response=error_response)
 
 
@@ -104,7 +109,7 @@ class ErrorHandler(object):
     ]
 
     @staticmethod
-    def process(http_error, error_response, cookie_jar='', login_params=''):
+    def process(http_error, error_response, settings=''):
         """
         Tries to process an error meaningfully
 
@@ -123,7 +128,7 @@ class ErrorHandler(object):
 
             if 'two_factor_required' in error_obj and error_obj['two_factor_required']:
                 raise ClientTwoFactorRequiredError(
-                    error_msg, http_error.code, error_response, cookie=cookie_jar, login_params=login_params
+                    error_msg, http_error.code, error_response, settings=settings
                 )
 
             error_message_type = error_obj.get('error_type', '') or error_obj.get('message', '')

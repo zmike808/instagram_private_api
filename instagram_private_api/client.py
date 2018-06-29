@@ -521,7 +521,7 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         except compat_urllib_error.HTTPError as e:
             error_response = self._read_response(e)
             self.logger.debug('RESPONSE: {0:d} {1!s}'.format(e.code, error_response))
-            ErrorHandler.process(e, error_response, self.cookie_jar, params)
+            ErrorHandler.process(e, error_response, self.settings)
 
         except (SSLError, timeout, SocketError,
                 compat_urllib_error.URLError,   # URLError is base of HTTPError

@@ -31,14 +31,7 @@ try:
     api = Client(username, password, on_login=lambda x: onlogin_callback(x, settings_file))
 except ClientTwoFactorRequiredError as e:
     response = json.loads(e.error_response)
-    cookie_string = e.cookie.dump()
-    login_params = e.login_params
-
-    params = {
-        'device_id': login_params['device_id'],
-        'guid': login_params['guid'],
-        'ad_id': login_params['adid'],
-    }
+    settings = e.settings
     two_factor_info = response['two_factor_info']
     phone_number_tail = two_factor_info['obfuscated_phone_number']
     two_factor_identifier = two_factor_info['two_factor_identifier']
@@ -46,11 +39,10 @@ except ClientTwoFactorRequiredError as e:
     try:
         api = Client(
             username, password,
-            cookie=cookie_string,
             two_factor_identifier=two_factor_identifier,
             verification_code=verification_code,
             on_login=lambda x: onlogin_callback(x, settings_file),
-            **params
+            settings=settings
         )
     except ClientError as e:
         print(e.error_response)
