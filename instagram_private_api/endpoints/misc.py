@@ -56,6 +56,23 @@ class MiscEndpointsMixin(object):
         }
         params.update(kwargs)
         return self._call_api('megaphone/log/', params=params, unsigned=True)
+        
+    def mark_dms_read(self, thread_id, thread_item_id):
+        """
+        Mark DMs as read
+
+        :param thread_id:
+        :param thread_item_id:
+        """
+        endpoint = 'direct_v2/threads/{thread_id!s}/items/{thread_item_id!s}/seen/'.format(**{'thread_id': thread_id, 'thread_item_id': thread_item_id})
+        print(endpoint)
+        params = {
+            'use_unified_inbox': True,
+            'action': 'mark_seen',
+            '_csrftoken': self.csrftoken,
+            '_uuid': self.uuid
+        }
+        return self._call_api(endpoint, params=params, unsigned=True)
 
     def ranked_recipients(self):
         """Get ranked recipients"""
