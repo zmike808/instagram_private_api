@@ -65,7 +65,7 @@ class MiscEndpointsMixin(object):
         :param thread_item_id:
         """
         endpoint = 'direct_v2/threads/{thread_id!s}/items/{thread_item_id!s}/seen/'.format(**{'thread_id': thread_id, 'thread_item_id': thread_item_id})
-        print(endpoint)
+
         params = {
             'use_unified_inbox': True,
             'action': 'mark_seen',
