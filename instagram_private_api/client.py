@@ -71,7 +71,7 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
     SIG_KEY_VERSION = Constants.SIG_KEY_VERSION
     APPLICATION_ID = Constants.APPLICATION_ID
 
-    def __init__(self, username, password, **kwargs):
+    def __init__(self, username=None, password=None, **kwargs):
         """
 
         :param username: Login username
