@@ -82,8 +82,6 @@ class AccountsEndpointsMixin(object):
             'adid': self.ad_id,
             'phone_id': self.phone_id,
             '_csrftoken': self.csrftoken,
-            'username': self.username,
-            'password': self.password,
             'login_attempt_count': '0',
             'two_factor_identifier': identifier,
             'verification_code': code,
