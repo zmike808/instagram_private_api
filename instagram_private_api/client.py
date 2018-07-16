@@ -97,8 +97,8 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         self.logger = logger
 
         user_settings = kwargs.pop('settings', None) or {}
-        self.username = kwargs.pop('username') or user_settings.get('username')
-        self.password = kwargs.pop('password') or user_settings.get('password')
+        self.username = username or user_settings.get('username')
+        self.password = password or user_settings.get('password')
         self.uuid = (
             kwargs.pop('guid', None) or kwargs.pop('uuid', None) or
             user_settings.get('uuid') or self.generate_uuid(False))
