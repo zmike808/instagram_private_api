@@ -437,9 +437,9 @@ class UploadEndpointsMixin(object):
                 raise ValueError('Incompatible aspect ratio.')
             if to_reel and not self.reel_compatible_aspect_ratio(size):
                 raise ValueError('Incompatible reel aspect ratio.')
-            if not 320 <= size[0] <= 1080:
-                # range from https://help.instagram.com/1631821640426723
-                raise ValueError('Invalid image width.')
+            # if not 320 <= size[0] <= 1080:
+            #     # range from https://help.instagram.com/1631821640426723
+            #     raise ValueError('Invalid image width.')
 
         location = kwargs.pop('location', None)
         if location:
