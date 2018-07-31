@@ -19,9 +19,10 @@ class ClientErrorCodes(object):
 class ClientError(Exception):
     """Generic error class, catch-all for most client issues.
     """
-    def __init__(self, msg, code=None, error_response=''):
+    def __init__(self, msg, code=None, error_response='', settings=''):
         self.code = code or 0
         self.error_response = error_response
+        self.settings = settings
         super(ClientError, self).__init__(msg)
 
     @property
@@ -31,16 +32,7 @@ class ClientError(Exception):
 
 class ClientTwoFactorRequiredError(ClientError):
     """Raised when two factor authentication required"""
-
-    def __init__(self, msg, code=None, error_response='', settings=''):
-        """
-        :param msg:
-        :param code:
-        :param error_response:
-        :param settings: settings used for authorization == Client.settings
-        """
-        self.settings = settings
-        super(ClientTwoFactorRequiredError, self).__init__(msg, code=code, error_response=error_response)
+    pass
 
 
 class ClientLoginError(ClientError):
@@ -142,7 +134,7 @@ class ErrorHandler(object):
                     if re.search(p, error_message_type):
                         raise error_info['error'](
                             error_message_type, code=http_error.code,
-                            error_response=json.dumps(error_obj)
+                            error_response=json.dumps(error_obj), settings=settings
                         )
             if error_message_type:
                 error_msg = '{0!s}: {1!s}'.format(http_error.reason, error_message_type)
