@@ -126,7 +126,8 @@ class ErrorHandler(object):
 
             if 'two_factor_required' in error_obj and error_obj['two_factor_required']:
                 raise ClientTwoFactorRequiredError(
-                    error_msg, http_error.code, error_response, settings=settings
+                    error_msg, code=http_error.code,
+                    error_response=error_response, settings=settings
                 )
 
             error_message_type = error_obj.get('error_type', '') or error_obj.get('message', '')
