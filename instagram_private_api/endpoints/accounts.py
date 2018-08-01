@@ -78,13 +78,13 @@ class AccountsEndpointsMixin(object):
 
         login_params = {
             'device_id': self.device_id,
-            'guid': self.uuid,
-            'adid': self.ad_id,
-            'phone_id': self.phone_id,
+            # 'guid': self.uuid,
+            # 'adid': self.ad_id,
+            # 'phone_id': self.phone_id,
             '_csrftoken': self.csrftoken,
             'username': self.username,
             'password': self.password,
-            'login_attempt_count': '0',
+            # 'login_attempt_count': '0',
             'two_factor_identifier': identifier,
             'verification_code': code,
         }
@@ -105,6 +105,29 @@ class AccountsEndpointsMixin(object):
         if self.on_login:
             on_login_callback = self.on_login
             on_login_callback(self)
+
+    def send_two_factor_login_sms(self, identifier):
+        """Request a new two factor login sms from Instagram"""
+
+        login_params = {
+            'device_id': self.device_id,
+            'guid': self.uuid,
+            '_csrftoken': self.csrftoken,
+            'username': self.username,
+            'two_factor_identifier': identifier,
+        }
+
+        response = self._call_api(
+            'accounts/send_two_factor_login_sms/', params=login_params, return_response=True)
+
+        if not self.csrftoken:
+            raise ClientError(
+                'Unable to get csrf from login.',
+                error_response=self._read_response(response))
+
+        response_json = json.loads(self._read_response(response))
+
+        return response_json
 
     def current_user(self):
         """Get current user info"""
