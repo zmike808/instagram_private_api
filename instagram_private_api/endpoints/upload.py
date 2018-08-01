@@ -298,6 +298,8 @@ class UploadEndpointsMixin(object):
         width, height = size
         
         reel_caption = kwargs.pop('reel_caption', '').replace(' ', '+')+'+'
+        mention_x = kwargs.pop('mention_x', 0.5)
+        mention_y = kwargs.pop('mention_y', 0.75)
         tag_name = kwargs.pop('tag_name', None)
         mention_id = kwargs.pop('mention_id', None)
         
@@ -307,17 +309,17 @@ class UploadEndpointsMixin(object):
             'tag_name'         : tag_name, # Hashtag WITHOUT the '#'! NOTE: This hashtag MUST appear in the caption.
             'x'                : 0.5, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
             'y'                : 0.5, # Also note that X/Y is setting the position of the CENTER of the clickable area.
-            'width'            : 0.24305555, # Clickable area size, as percentage of image size: 0.0 - 1.0
-            'height'           : 0.07347973, # ...
+            'width'            : 0.24, # Clickable area size, as percentage of image size: 0.0 - 1.0
+            'height'           : 0.07, # ...
             'rotation'         : 0.0,
             'is_sticker'       : True # Don't change this value.
         }]);
         reel_mentions = json.dumps(
         [{
-            'x'                : 0.5, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
-            'y'                : 0.75, # Also note that X/Y is setting the position of the CENTER of the clickable area.
-            'width'            : 0.44305555, # Clickable area size, as percentage of image size: 0.0 - 1.0
-            'height'           : 0.09347973, # ...
+            'x'                : mention_x, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
+            'y'                : mention_y, # Also note that X/Y is setting the position of the CENTER of the clickable area.
+            'width'            : 0.44, # Clickable area size, as percentage of image size: 0.0 - 1.0
+            'height'           : 0.09, # ...
             'rotation'         : 0.0,
             'user_id'          : mention_id,
             'is_sticker'       : True
@@ -425,7 +427,7 @@ class UploadEndpointsMixin(object):
             - **disable_comments**: bool to disable comments
         :return:
         """
-        warnings.warn('This endpoint has not been fully tested.', UserWarning)
+        #warnings.warn('This endpoint has not been fully tested.', UserWarning)
 
         # if upload_id is provided, it's a thumbnail for a vid upload
         for_video = True if upload_id else False
