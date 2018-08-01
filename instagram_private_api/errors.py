@@ -35,6 +35,11 @@ class ClientTwoFactorRequiredError(ClientError):
     pass
 
 
+class ClientTwoFactorCodeInvalid(ClientError):
+    """Raised when two factor code invalid"""
+    pass
+
+
 class ClientLoginError(ClientError):
     """Raised when login fails."""
     pass
@@ -98,6 +103,7 @@ class ErrorHandler(object):
         },
         {'patterns': ['challenge_required'], 'error': ClientChallengeRequiredError},
         {'patterns': ['sentry_block'], 'error': ClientSentryBlockError},
+        {'patterns': ['sms_code_validation_code_invalid'], 'error': ClientTwoFactorCodeInvalid}
     ]
 
     @staticmethod
