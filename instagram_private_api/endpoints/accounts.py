@@ -9,6 +9,7 @@ from ..errors import (
 )
 from ..http import MultipartFormDataEncoder
 from ..compatpatch import ClientCompatPatch
+from ..errors import ClientLoginRequiredError
 from socket import timeout, error as SocketError
 from ssl import SSLError
 try:
@@ -23,6 +24,9 @@ class AccountsEndpointsMixin(object):
 
     def login(self):
         """Login."""
+
+        if not self.username or not self.password:
+            raise ClientLoginRequiredError('login_required', code=400)
 
         prelogin_params = self._call_api(
             'si/fetch_headers/',
@@ -76,15 +80,14 @@ class AccountsEndpointsMixin(object):
     def login2fa(self, identifier, code):
         """Login into account with 2fa enabled."""
 
+        if not identifier or not code:
+            raise ClientLoginRequiredError('login_required', code=400)
+
         login_params = {
             'device_id': self.device_id,
-            # 'guid': self.uuid,
-            # 'adid': self.ad_id,
-            # 'phone_id': self.phone_id,
             '_csrftoken': self.csrftoken,
             'username': self.username,
             'password': self.password,
-            # 'login_attempt_count': '0',
             'two_factor_identifier': identifier,
             'verification_code': code,
         }
@@ -108,6 +111,9 @@ class AccountsEndpointsMixin(object):
 
     def send_two_factor_login_sms(self, identifier):
         """Request a new two factor login sms from Instagram"""
+
+        if not identifier:
+            raise ClientError('identifier is required to send two factor login code')
 
         login_params = {
             'device_id': self.device_id,

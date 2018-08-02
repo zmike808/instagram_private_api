@@ -27,8 +27,9 @@ username = 'username'
 password = 'password'
 settings_file = '/path/to/file/settings_{}.json'.format(username)
 
+api = Client(username, password, on_login=lambda x: onlogin_callback(x, settings_file))
 try:
-    api = Client(username, password, on_login=lambda x: onlogin_callback(x, settings_file))
+    api.login()
 except ClientTwoFactorRequiredError as e:
     response = json.loads(e.error_response)
     settings = e.settings
@@ -37,12 +38,6 @@ except ClientTwoFactorRequiredError as e:
     two_factor_identifier = two_factor_info['two_factor_identifier']
     verification_code = input('Enter verification code, sent on number ending with {}: '.format(phone_number_tail))
     try:
-        api = Client(
-            username, password,
-            two_factor_identifier=two_factor_identifier,
-            verification_code=verification_code,
-            on_login=lambda x: onlogin_callback(x, settings_file),
-            settings=settings
-        )
+        api.login2fa(two_factor_identifier, verification_code)
     except ClientError as e:
         print(e.error_response)
