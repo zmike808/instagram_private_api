@@ -143,6 +143,7 @@ class UploadEndpointsMixin(object):
         min_ratio, max_ratio = MediaRatios.reel
         width, height = size
         this_ratio = 1.0 * width / height
+        print('reel size {}x{} - min/ratio/max = {}/{}/{}'.format(width, height, min_ratio, this_ratio, max_ratio))
         return min_ratio <= this_ratio <= max_ratio
 
     def configure(self, upload_id, size, caption='', location=None,
