@@ -301,14 +301,20 @@ class UploadEndpointsMixin(object):
         tag_name = kwargs.pop('tag_name', None)
         tag_x = kwargs.pop('tag_x', 0.5)
         tag_y = kwargs.pop('tag_y', 0.75)
+        tag_width = kwargs.pop('tag_width', 0.8)
+        tag_height = kwargs.pop('tag_height', 0.1)
         
         mention_id = kwargs.pop('mention_id', None)
         mention_x = kwargs.pop('mention_x', 0.5)
         mention_y = kwargs.pop('mention_y', 0.75)
+        mention_width = kwargs.pop('mention_width', 0.8)
+        mention_height = kwargs.pop('mention_height', 0.1)
         
         media_id = kwargs.pop('media_id', None)
         media_x = kwargs.pop('media_x', 0.5)
         media_y = kwargs.pop('media_y', 0.75)
+        media_width = kwargs.pop('media_width', 0.8)
+        media_height = kwargs.pop('media_height', 0.5)
         
         #print("reel_caption={} tag_name={} mention_id={} ".format(reel_caption, tag_name, mention_id))
         story_hashtags = json.dumps(
@@ -316,8 +322,8 @@ class UploadEndpointsMixin(object):
             'tag_name'         : tag_name, # Hashtag WITHOUT the '#'! NOTE: This hashtag MUST appear in the caption.
             'x'                : tag_x, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
             'y'                : tag_y, # Also note that X/Y is setting the position of the CENTER of the clickable area.
-            'width'            : 0.44, # Clickable area size, as percentage of image size: 0.0 - 1.0
-            'height'           : 0.09, # ...
+            'width'            : tag_width, # Clickable area size, as percentage of image size: 0.0 - 1.0
+            'height'           : tag_height,
             'rotation'         : 0.0,
             'is_sticker'       : True # Don't change this value.
         }]);
@@ -326,8 +332,8 @@ class UploadEndpointsMixin(object):
             'user_id'          : mention_id,
             'x'                : mention_x, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
             'y'                : mention_y, # Also note that X/Y is setting the position of the CENTER of the clickable area.
-            'width'            : 0.44, # Clickable area size, as percentage of image size: 0.0 - 1.0
-            'height'           : 0.09, # ...
+            'width'            : mention_width, # Clickable area size, as percentage of image size: 0.0 - 1.0
+            'height'           : mention_height,
             'rotation'         : 0.0,
             'is_sticker'       : True
         }]);
@@ -336,8 +342,8 @@ class UploadEndpointsMixin(object):
             'media_id'         : media_id,
             'x'                : media_x, # Range: 0.0 - 1.0. Note that x = 0.5 and y = 0.5 is center of screen.
             'y'                : media_y, # Also note that X/Y is setting the position of the CENTER of the clickable area.
-            'width'            : 0.44, # Clickable area size, as percentage of image size: 0.0 - 1.0
-            'height'           : 0.09, # ...
+            'width'            : media_width, # Clickable area size, as percentage of image size: 0.0 - 1.0
+            'height'           : media_height,
             'rotation'         : 0.0,
             'is_sticker'       : True
         }]);
