@@ -18,6 +18,8 @@ class ChallengeEndpointsMixin(object):
             'security_code': code,
             'guid': self.uuid,
             'device_id': self.device_id,
+            'username': self.username,
+            'password': self.password,
             '_csrftoken': self.csrftoken,
             '_uuid': self.uuid,
             '_uid': self.authenticated_user_id
@@ -53,6 +55,8 @@ class ChallengeEndpointsMixin(object):
             'choice': confirm_method,
             'guid': self.uuid,
             'device_id': self.device_id,
+            'username': self.username,
+            'password': self.password,
             '_csrftoken': self.csrftoken,
             '_uuid': self.uuid,
             '_uid': self.authenticated_user_id
