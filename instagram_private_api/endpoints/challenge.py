@@ -51,6 +51,9 @@ class ChallengeEndpointsMixin(object):
         params = {
             'device_id': self.device_id,
             '_csrftoken': self.csrftoken,
+            '_uuid': self.api.uuid,
+            '_uid': self.api.authenticated_user_id,
+            'guid': self.api.uuid,
             'username': self.username,
             'password': self.password,
             'choice': confirm_method
