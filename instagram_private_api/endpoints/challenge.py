@@ -15,11 +15,12 @@ class ChallengeEndpointsMixin(object):
         :return:
         """
         login_params = {
+            'security_code': code,
+            'guid': self.api.uuid,
             'device_id': self.device_id,
             '_csrftoken': self.csrftoken,
-            'username': self.username,
-            'password': self.password,
-            'security_code': code,
+            '_uuid': self.api.uuid,
+            '_uid': self.api.authenticated_user_id
         }
 
         response = self._call_api(
@@ -49,14 +50,12 @@ class ChallengeEndpointsMixin(object):
         :return:
         """
         params = {
+            'choice': confirm_method,
+            'guid': self.api.uuid,
             'device_id': self.device_id,
             '_csrftoken': self.csrftoken,
             '_uuid': self.api.uuid,
-            '_uid': self.api.authenticated_user_id,
-            'guid': self.api.uuid,
-            'username': self.username,
-            'password': self.password,
-            'choice': confirm_method
+            '_uid': self.api.authenticated_user_id
         }
 
         response = self._call_api(
