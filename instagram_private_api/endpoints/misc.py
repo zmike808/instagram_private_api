@@ -1,8 +1,9 @@
+import json
 import warnings
 
 from .common import ClientDeprecationWarning
-from ..constants import Constants
 from ..compatpatch import ClientCompatPatch
+from ..constants import Constants
 
 
 class MiscEndpointsMixin(object):
@@ -59,7 +60,8 @@ class MiscEndpointsMixin(object):
 
     def ranked_recipients(self):
         """Get ranked recipients"""
-        res = self._call_api('direct_v2/ranked_recipients/', query={'show_threads': 'true'})
+        res = self._call_api('direct_v2/ranked_recipients/',
+                             query={'show_threads': 'true'})
         return res
 
     def recent_recipients(self):
@@ -85,6 +87,58 @@ class MiscEndpointsMixin(object):
     def direct_v2_inbox(self):
         """Get v2 inbox"""
         return self._call_api('direct_v2/inbox/')
+
+    def direct_v2_pending_inbox(self):
+        """Get v2 pending inbox"""
+        return self._call_api('direct_v2/pending_inbox/')
+
+    def direct_v2_approve(self, thread_id):
+        """Approve a pending thread"""
+        return self._call_api(
+            'direct_v2/threads/{}/approve/'.format(thread_id),
+            params='')
+
+    def direct_v2_approve_all(self):
+        """Approval all pending threads"""
+        return self._call_api(
+            'direct_v2/threads/approve_all/', params='')
+
+    def direct_v2_broadcast_text(self, thread_ids, text):
+        """Broadcast text to one or more inbox v2 threads"""
+        return self._call_api('direct_v2/threads/broadcast/text/', params={
+            'thread_ids': json.dumps(thread_ids),
+            'text': text,
+        }, unsigned=True)
+
+    def direct_v2_broadcast_link(self, thread_ids, text, link_urls):
+        """Broadcast text with links to one or more inbox v2 threads"""
+        return self._call_api('direct_v2/threads/broadcast/link/', params={
+            'thread_ids': json.dumps(thread_ids),
+            'link_text': text,
+            'link_urls': json.dumps(link_urls)
+        }, unsigned=True)
+
+    def direct_v2_threads_show(self, thread_id):
+        """Retreive a thread by its thread_id"""
+        # TODO(NW): Handle cursor
+        return self._call_api(
+            'direct_v2/threads/{}/'.format(thread_id),
+            query={'cursor', ''},
+        )
+
+    def direct_v2_threads_seen(self, thread_id, item_id):
+        """Mark a thread item as seen"""
+        return self._call_api(
+            'direct_v2/threads/{}/items/{}/seen/'.format(thread_id, item_id),
+            params=''
+        )
+
+    def direct_v2_threads_hide(self, thread_id):
+        """Remove a thread from the inbox"""
+        return self._call_api(
+            'direct_v2/threads/{}/hide/'.format(thread_id),
+            params=''
+        )
 
     def oembed(self, url, **kwargs):
         """
@@ -155,7 +209,8 @@ class MiscEndpointsMixin(object):
         """
         if sticker_type not in ['static_stickers']:
             raise ValueError('Invalid sticker_type: {0!s}'.format(sticker_type))
-        if location and not ('lat' in location and 'lng' in location and 'horizontalAccuracy' in location):
+        if location and not (
+                'lat' in location and 'lng' in location and 'horizontalAccuracy' in location):
             raise ValueError('Invalid location')
         params = {
             'type': sticker_type
