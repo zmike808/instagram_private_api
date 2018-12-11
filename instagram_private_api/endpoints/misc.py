@@ -119,11 +119,13 @@ class MiscEndpointsMixin(object):
         }, unsigned=True)
 
     def direct_v2_threads_show(self, thread_id):
-        """Retreive a thread by its thread_id"""
-        # TODO(NW): Handle cursor
+        """Retrieve a thread by its thread_id"""
         return self._call_api(
             'direct_v2/threads/{}/'.format(thread_id),
-            query={'cursor', ''},
+            query={
+                # TODO(NW): Handle cursor
+                # 'cursor', ''
+            },
         )
 
     def direct_v2_threads_seen(self, thread_id, item_id):
