@@ -45,5 +45,5 @@ except ClientCheckpointRequiredError as e:
     identifier = match_dict['identifier']
 
     res = api.choose_confirm_method(account_id, identifier)  # confirm_method param has default value 1, you can pass 0
-    code = raw_input('Enter code from email: ')
+    code = input('Enter code from email: ')
     api.send_challenge(account_id, identifier, code)
