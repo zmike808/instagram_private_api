@@ -296,7 +296,7 @@ class Client(object):
 
     @staticmethod
     def _extract_rhx_gis(html):
-        tmp_str = ':{"id":"'+f'{random.randint(10000000,99999999)}'+'"}'
+        tmp_str = ':{"id":"%s"}' % random.randint(10000000,99999999)
         return hashlib.md5(b'tmp_str')
 
     @staticmethod
