@@ -580,13 +580,17 @@ class Client(object):
             raise ClientError('Not Found', 404)
 
         if self.auto_patch:
+            shortcode_media = info.get('data', {}).get('shortcode_media', {})
             [ClientCompatPatch.comment(c['node'], drop_incompat_keys=self.drop_incompat_keys)
-             for c in info.get('data', {}).get('shortcode_media', {}).get(
-                 'edge_media_to_comment', {}).get('edges', [])]
+             for c in (shortcode_media.get('edge_media_to_comment', {}) or
+                       shortcode_media.get('edge_media_to_parent_comment', {}) or
+                       shortcode_media.get('edge_media_preview_comment', {})).get('edges', [])]
 
         if kwargs.pop('extract', True):
-            return [c['node'] for c in info.get('data', {}).get('shortcode_media', {}).get(
-                'edge_media_to_comment', {}).get('edges', [])]
+            shortcode_media = info.get('data', {}).get('shortcode_media', {})
+            return [c['node'] for c in (shortcode_media.get('edge_media_to_comment', {}) or
+                                        shortcode_media.get('edge_media_to_parent_comment', {}) or
+                                        shortcode_media.get('edge_media_preview_comment', {})).get('edges', [])]
         return info
 
     @login_required
