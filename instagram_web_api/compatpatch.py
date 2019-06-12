@@ -108,7 +108,8 @@ class ClientCompatPatch(object):
         }
         media['comments'] = {
             'count': (media.get('comments', {})
-                      or media.get('edge_media_to_comment', {})).get('count', 0),
+                      or media.get('edge_media_to_comment', {})
+                      or media.get('edge_media_preview_comment', {})).get('count', 0),
             'data': []
         }
         # Try to preserve location even if there's no lat/lng

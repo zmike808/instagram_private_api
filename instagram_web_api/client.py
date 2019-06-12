@@ -309,8 +309,8 @@ class Client(object):
 
     @staticmethod
     def _extract_rhx_gis(html):
-        tmp_str = ':{"id":"%s"}' % random.randint(10000000,99999999)
-        return hashlib.md5(b'tmp_str')
+        tmp_str = ':{"id":"' + str(random.randint(10000000, 99999999)) + '"}'
+        return hashlib.md5(tmp_str.encode()).hexdigest()
 
     @staticmethod
     def _extract_csrftoken(html):
@@ -580,16 +580,19 @@ class Client(object):
             raise ClientError('Not Found', 404)
 
         if self.auto_patch:
+            shortcode_media = info.get('data', {}).get('shortcode_media', {})
             [ClientCompatPatch.comment(c['node'], drop_incompat_keys=self.drop_incompat_keys)
-             for c in info.get('data', {}).get('shortcode_media', {}).get(
-                 'edge_media_to_comment', {}).get('edges', [])]
+             for c in (shortcode_media.get('edge_media_to_comment', {}) or
+                       shortcode_media.get('edge_media_to_parent_comment', {}) or
+                       shortcode_media.get('edge_media_preview_comment', {})).get('edges', [])]
 
         if kwargs.pop('extract', True):
-            return [c['node'] for c in info.get('data', {}).get('shortcode_media', {}).get(
-                'edge_media_to_comment', {}).get('edges', [])]
+            shortcode_media = info.get('data', {}).get('shortcode_media', {})
+            return [c['node'] for c in (shortcode_media.get('edge_media_to_comment', {}) or
+                                        shortcode_media.get('edge_media_to_parent_comment', {}) or
+                                        shortcode_media.get('edge_media_preview_comment', {})).get('edges', [])]
         return info
 
-    @login_required
     def media_likers(self, short_code, **kwargs):
         """
         Get media likers
