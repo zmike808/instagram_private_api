@@ -439,6 +439,22 @@ class Client(object):
             ClientCompatPatch.user(info['graphql']['user'], drop_incompat_keys=self.drop_incompat_keys)
         return info['graphql']['user']
 
+    def user_info3(self, user_id, **kwargs):
+        """
+        Get user info.
+
+        :param user_id: User id
+        :param kwargs:
+        :return:
+        """
+        endpoint = 'https://i.instagram.com/api/v1/users/{user_id!s}/info/'.format(**{'user_id': user_id})
+        try:
+            info = self._make_request(endpoint)
+        except ClientError as ce:
+            raise ce
+
+        return self.user_info2(info['user']['username'])
+
     def user_feed(self, user_id, **kwargs):
         """
         Get user feed
