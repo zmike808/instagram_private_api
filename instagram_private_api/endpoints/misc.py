@@ -13,25 +13,25 @@ class MiscEndpointsMixin(object):
         if prelogin:
             params = {
                 'id': self.generate_uuid(),
-                'experiments': Constants.LOGIN_EXPERIMENTS
+                'experiments': Constants.LOGIN_EXPERIMENTS,
             }
         else:
             params = {
                 'id': self.authenticated_user_id,
-                'experiments': Constants.EXPERIMENTS
+                'experiments': Constants.EXPERIMENTS,
             }
             params.update(self.authenticated_params)
         return self._call_api('qe/sync/', params=params)
 
-    def expose(self, experiment='ig_android_profile_contextual_feed'):  # pragma: no cover
+    def expose(
+        self, experiment='ig_android_profile_contextual_feed'
+    ):  # pragma: no cover
         warnings.warn(
             'This endpoint is believed to be obsolete. Do not use.',
-            ClientDeprecationWarning)
+            ClientDeprecationWarning,
+        )
 
-        params = {
-            'id': self.authenticated_user_id,
-            'experiment': experiment
-        }
+        params = {'id': self.authenticated_user_id, 'experiment': experiment}
         params.update(self.authenticated_params)
         return self._call_api('qe/expose/', params=params)
 
@@ -52,7 +52,7 @@ class MiscEndpointsMixin(object):
             '_uuid': self.uuid,
             'device_id': self.device_id,
             '_csrftoken': self.csrftoken,
-            'uuid': self.generate_uuid(return_hex=True)
+            'uuid': self.generate_uuid(return_hex=True),
         }
         params.update(kwargs)
         return self._call_api('megaphone/log/', params=params, unsigned=True)
@@ -76,7 +76,9 @@ class MiscEndpointsMixin(object):
 
     def ranked_recipients(self):
         """Get ranked recipients"""
-        res = self._call_api('direct_v2/ranked_recipients/', query={'show_threads': 'true'})
+        res = self._call_api(
+            'direct_v2/ranked_recipients/', query={'show_threads': 'true'}
+        )
         return res
 
     def recent_recipients(self):
@@ -97,11 +99,24 @@ class MiscEndpointsMixin(object):
         This returns the items in the 'You' tab.
         """
         return self._call_api(
-            'news/inbox/', query={'limited_activity': 'true', 'show_su': 'true'})
+            'news/inbox/', query={'limited_activity': 'true', 'show_su': 'true'}
+        )
 
     def direct_v2_inbox(self):
         """Get v2 inbox"""
         return self._call_api('direct_v2/inbox/')
+
+    def direct_v2_thread(self, thread_id, **kwargs):
+        """
+        Get v2 thread
+
+        :param thread_id:
+        :param kwargs:
+            - **cursor**: For pagination
+        :return:
+        """
+        endpoint = 'direct_v2/threads/{thread_id!s}/'.format(**{'thread_id': thread_id})
+        return self._call_api(endpoint, query=kwargs)
 
     def oembed(self, url, **kwargs):
         """
@@ -128,8 +143,8 @@ class MiscEndpointsMixin(object):
         """
         warnings.warn('This endpoint is not tested fully.', UserWarning)
         res = self._call_api(
-            'language/translate/',
-            query={'id': object_id, 'type': object_type})
+            'language/translate/', query={'id': object_id, 'type': object_type}
+        )
         return res
 
     def bulk_translate(self, comment_ids):
@@ -154,7 +169,12 @@ class MiscEndpointsMixin(object):
         """
         res = self._call_api(
             'fbsearch/topsearch/',
-            query={'context': 'blended', 'ranked_token': self.rank_token, 'query': query})
+            query={
+                'context': 'blended',
+                'ranked_token': self.rank_token,
+                'query': query,
+            },
+        )
         if self.auto_patch and res.get('users', []):
             [ClientCompatPatch.list_user(u['user']) for u in res['users']]
         return res
@@ -172,11 +192,11 @@ class MiscEndpointsMixin(object):
         """
         if sticker_type not in ['static_stickers']:
             raise ValueError('Invalid sticker_type: {0!s}'.format(sticker_type))
-        if location and not ('lat' in location and 'lng' in location and 'horizontalAccuracy' in location):
+        if location and not (
+            'lat' in location and 'lng' in location and 'horizontalAccuracy' in location
+        ):
             raise ValueError('Invalid location')
-        params = {
-            'type': sticker_type
-        }
+        params = {'type': sticker_type}
         if location:
             params['lat'] = location['lat']
             params['lng'] = location['lng']

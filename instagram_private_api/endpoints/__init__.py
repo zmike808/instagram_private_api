@@ -1,4 +1,3 @@
-# flake8: noqa
 from .accounts import AccountsEndpointsMixin
 from .discover import DiscoverEndpointsMixin
 from .feed import FeedEndpointsMixin
@@ -14,6 +13,8 @@ from .usertags import UsertagsEndpointsMixin
 from .collections import CollectionsEndpointsMixin
 from .highlights import HighlightsEndpointsMixin
 from .igtv import IGTVEndpointsMixin
+from .addressbook import AddressBookEndpointMixin
+from .insights import InsightsEndpointsMixin
 from .challenge import ChallengeEndpointsMixin
 
 from .common import (
