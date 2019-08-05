@@ -13,7 +13,7 @@ with open('requirements.test.txt') as f:
     test_deps = f.read().splitlines()
 
 documentation = readall('README.md')
-version = readall('instapi', 'version.txt')
+version = readall('instagram_private_api', 'version.txt')
 
 setup(
     name='instagram_private_api',
