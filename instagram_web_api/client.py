@@ -232,6 +232,8 @@ class Client(object):
                 'Accept-Encoding': 'gzip, deflate',
                 'Connection': 'close',
             }
+            if self.csrftoken:
+                headers['x-csrftoken'] = self.csrftoken
             if params or params == '':
                 headers.update({
                     'x-csrftoken': self.csrftoken,
