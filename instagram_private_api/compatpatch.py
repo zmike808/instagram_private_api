@@ -380,7 +380,7 @@ class ClientCompatPatch(object):
     @classmethod
     def user(cls, user, drop_incompat_keys=False):
         """Patch a user object """
-        user['id'] = str(user['pk'])
+        user['id'] = str(user['pk']) if 'pk' in user else None
         user['bio'] = user.get('biography', '')
         user['profile_picture'] = user['profile_pic_url']
         user['website'] = user.get('external_url', '')
