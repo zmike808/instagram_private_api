@@ -430,6 +430,8 @@ class Client(object):
         endpoint = 'https://www.instagram.com/{username!s}/'.format(**{'username': user_name})
         try:
             info = self._make_request(endpoint, query={'__a': '1'})
+            if not info:
+                raise ClientError("Empty user info", 404)
         except ClientError as ce:
             if ce.code != 403:
                 raise ce
