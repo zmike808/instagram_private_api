@@ -438,6 +438,8 @@ class Client(object):
             # reinit to get a fresh rhx_gis
             self.init()
             info = self._make_request(endpoint, query={'__a': '1'})
+        except json.JSONDecodeError as e:
+            raise ClientError("JSONDecodeError by throttling : {}".format(str(e)), 429)
 
         if self.auto_patch:
             ClientCompatPatch.user(info['graphql']['user'], drop_incompat_keys=self.drop_incompat_keys)
