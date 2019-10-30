@@ -101,6 +101,11 @@ class ClientSentryBlockError(ClientError):
     pass
 
 
+class ClientFeedbackRequiredError(ClientError):
+    """Raise when IG has flagged your account for spam or abusive behavior"""
+    pass
+
+
 class ErrorHandler(object):
 
     KNOWN_ERRORS_MAP = [
@@ -116,6 +121,7 @@ class ErrorHandler(object):
         },
         {'patterns': ['challenge_required'], 'error': ClientChallengeRequiredError},
         {'patterns': ['sentry_block'], 'error': ClientSentryBlockError},
+        {'patterns': ['feedback_required'], 'error': ClientFeedbackRequiredError},
         {'patterns': ['sms_code_validation_code_invalid'], 'error': ClientTwoFactorCodeInvalid}
     ]
 
