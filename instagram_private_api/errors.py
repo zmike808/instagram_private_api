@@ -106,6 +106,11 @@ class ClientFeedbackRequiredError(ClientError):
     pass
 
 
+class ClientFeedbackRequiredError(ClientError):
+    """Raise when IG has flagged your account for spam or abusive behavior"""
+    pass
+
+
 class ErrorHandler(object):
 
     KNOWN_ERRORS_MAP = [

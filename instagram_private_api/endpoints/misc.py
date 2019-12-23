@@ -1,8 +1,9 @@
+import json
 import warnings
 
 from .common import ClientDeprecationWarning
-from ..constants import Constants
 from ..compatpatch import ClientCompatPatch
+from ..constants import Constants
 
 
 class MiscEndpointsMixin(object):
@@ -102,9 +103,74 @@ class MiscEndpointsMixin(object):
             'news/inbox/', query={'limited_activity': 'true', 'show_su': 'true'}
         )
 
-    def direct_v2_inbox(self):
-        """Get v2 inbox"""
-        return self._call_api('direct_v2/inbox/')
+    def direct_v2_inbox(self, oldest_cursor=None):
+        """
+        Get v2 inbox
+        To retrieve the second page of the inbox, pass the oldest_cursor
+        returned by the previous direct_v2_inbox() call
+        """
+        query = {}
+        if oldest_cursor:
+            query = {
+                '__a': 1,
+                'max_id': oldest_cursor
+            }
+
+        return self._call_api('direct_v2/inbox/', query=query)
+
+    def direct_v2_pending_inbox(self):
+        """Get v2 pending inbox"""
+        return self._call_api('direct_v2/pending_inbox/')
+
+    def direct_v2_approve(self, thread_id):
+        """Approve a pending thread"""
+        return self._call_api(
+            'direct_v2/threads/{}/approve/'.format(thread_id),
+            params='')
+
+    def direct_v2_approve_all(self):
+        """Approval all pending threads"""
+        return self._call_api(
+            'direct_v2/threads/approve_all/', params='')
+
+    def direct_v2_broadcast_text(self, thread_ids, text):
+        """Broadcast text to one or more inbox v2 threads"""
+        return self._call_api('direct_v2/threads/broadcast/text/', params={
+            'thread_ids': json.dumps(thread_ids),
+            'text': text,
+        }, unsigned=True)
+
+    def direct_v2_broadcast_link(self, thread_ids, text, link_urls):
+        """Broadcast text with links to one or more inbox v2 threads"""
+        return self._call_api('direct_v2/threads/broadcast/link/', params={
+            'thread_ids': json.dumps(thread_ids),
+            'link_text': text,
+            'link_urls': json.dumps(link_urls)
+        }, unsigned=True)
+
+    def direct_v2_threads_show(self, thread_id):
+        """Retrieve a thread by its thread_id"""
+        return self._call_api(
+            'direct_v2/threads/{}/'.format(thread_id),
+            query={
+                # TODO(NW): Handle cursor
+                # 'cursor', ''
+            },
+        )
+
+    def direct_v2_threads_seen(self, thread_id, item_id):
+        """Mark a thread item as seen"""
+        return self._call_api(
+            'direct_v2/threads/{}/items/{}/seen/'.format(thread_id, item_id),
+            params=''
+        )
+
+    def direct_v2_threads_hide(self, thread_id):
+        """Remove a thread from the inbox"""
+        return self._call_api(
+            'direct_v2/threads/{}/hide/'.format(thread_id),
+            params=''
+        )
 
     def direct_v2_thread(self, thread_id, **kwargs):
         """
