@@ -24,16 +24,13 @@ class AccountsEndpointsMixin(object):
     def login(self):
         """Login."""
 
+        print('overrided login()')
+
         prelogin_params = self._call_api(
             'si/fetch_headers/',
             params='',
             query={'challenge_type': 'signup', 'guid': self.generate_uuid(True)},
             return_response=True)
-
-        if not self.csrftoken:
-            raise ClientError(
-                'Unable to get csrf from prelogin.',
-                error_response=self._read_response(prelogin_params))
 
         login_params = {
             'device_id': self.device_id,
@@ -46,22 +43,67 @@ class AccountsEndpointsMixin(object):
             'login_attempt_count': '0',
         }
 
-        login_response = self._call_api(
+        try:
+            """
+            login_response = self._call_api(
             'accounts/login/', params=login_params, return_response=True)
+            """
 
-        if not self.csrftoken:
-            raise ClientError(
-                'Unable to get csrf from login.',
-                error_response=self._read_response(login_response))
+            url = 'https://i.instagram.com/api/v1/accounts/login/'
+            params = login_params
 
-        login_json = json.loads(self._read_response(login_response))
+            headers = self.default_headers
+            headers['Content-type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
+            
+            json_params = json.dumps(params, separators=(',', ':'))
+            hash_sig = self._generate_signature(json_params)
+            post_params = {
+                'ig_sig_key_version': self.key_version,
+                'signed_body': hash_sig + '.' + json_params
+            }
 
-        if not login_json.get('logged_in_user', {}).get('pk'):
-            raise ClientLoginError('Unable to login.')
+            data = compat_urllib_parse.urlencode(post_params).encode('ascii')
+            req = compat_urllib_request.Request(url, data, headers=headers)
 
-        if self.on_login:
-            on_login_callback = self.on_login
-            on_login_callback(self)
+            try:
+                response = self.opener.open(req, timeout=self.timeout)
+            except compat_urllib_error.HTTPError as e:
+                response_text = json.loads(e.read().decode('utf8'))
+                checkpoint_url = response_text.get('challenge').get('url')
+                self.login_challenge(checkpoint_url, headers)
+                
+        except Exception as e:
+            print('unhandled exception', e)
+
+    def login_challenge(self, checkpoint_url, headers):
+
+        try:
+            print('redirecting to ..', checkpoint_url)
+            headers['X-CSRFToken'] = self.csrftoken
+            headers['Referer'] = checkpoint_url
+            
+            mode = int(input('Choose a challenge mode (0 - SMS, 1 - Email): '))
+            challenge_data = {'choice': mode}
+            data = compat_urllib_parse.urlencode(challenge_data).encode('ascii')
+            
+            req = compat_urllib_request.Request(checkpoint_url, data, headers=headers)
+            response = self.opener.open(req, timeout=self.timeout)
+
+            code = input('Enter code received: ')
+            code_data = {'security_code': code}
+            data = compat_urllib_parse.urlencode(code_data).encode('ascii')
+
+            req = compat_urllib_request.Request(checkpoint_url, data, headers=headers)
+            response = self.opener.open(req, timeout=self.timeout)
+
+            if response.info().get('Content-Encoding') == 'gzip':
+                buf = BytesIO(response.read())
+                res = gzip.GzipFile(fileobj=buf).read().decode('utf8')
+            else:
+                res = response.read().decode('utf8')
+    
+        except compat_urllib_error.HTTPError as e:
+            print('unhandled exception', e)
 
         # # Post-login calls in client
         # self.sync()
