@@ -2,7 +2,7 @@ import json
 
 from ..compat import (
     compat_urllib_request, compat_urllib_error,
-    compat_http_client
+    compat_http_client, compat_urllib_parse
 )
 from ..errors import (
     ErrorHandler, ClientError, ClientLoginError, ClientConnectionError
@@ -104,16 +104,6 @@ class AccountsEndpointsMixin(object):
     
         except compat_urllib_error.HTTPError as e:
             print('unhandled exception', e)
-
-        # # Post-login calls in client
-        # self.sync()
-        # self.autocomplete_user_list()
-        # self.feed_timeline()
-        # self.ranked_recipients()
-        # self.recent_recipients()
-        # self.direct_v2_inbox()
-        # self.news_inbox()
-        # self.explore()
 
     def current_user(self):
         """Get current user info"""
