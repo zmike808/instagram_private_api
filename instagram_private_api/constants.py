@@ -2,10 +2,10 @@ class Constants(object):
     """https://github.com/dilame/instagram-private-api/blob/master/src/core/constants.ts"""
     """Constants holder class that stores the bulk of the fixed strings used in the library."""
 
-    IG_SIG_KEY = 'a86109795736d73c9a94172cd9b736917d7d94ca61c9101164894b3f0d43bef4'
-    IG_CAPABILITIES = '3brTBw=='
+    IG_SIG_KEY = 'c36436a942ea1dbb40d7f2d7d45280a620d991ce8c62fb4ce600f0a048c32c11'
+    IG_CAPABILITIES = '3brTvw=='
     SIG_KEY_VERSION = '4'
-    APP_VERSION = '103.1.0.15.119'
+    APP_VERSION = '112.0.0.18.152'
     APPLICATION_ID = '567067343352427'
     FB_HTTP_ENGINE = 'Liger'
 
