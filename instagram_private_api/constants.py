@@ -2,22 +2,22 @@ class Constants(object):
     """https://github.com/dilame/instagram-private-api/blob/master/src/core/constants.ts"""
     """Constants holder class that stores the bulk of the fixed strings used in the library."""
 
-    IG_SIG_KEY = 'c36436a942ea1dbb40d7f2d7d45280a620d991ce8c62fb4ce600f0a048c32c11'
+    IG_SIG_KEY = '46024e8f31e295869a0e861eaed42cb1dd8454b55232d85f6c6764365079374b'
     IG_CAPABILITIES = '3brTvw=='
     SIG_KEY_VERSION = '4'
-    APP_VERSION = '112.0.0.18.152'
+    APP_VERSION = '136.0.0.34.124'
     APPLICATION_ID = '567067343352427'
     FB_HTTP_ENGINE = 'Liger'
 
-    ANDROID_VERSION = 28
-    ANDROID_RELEASE = '9.0'
-    PHONE_MANUFACTURER = 'OnePlus'
-    PHONE_DEVICE = 'GM1903'
-    PHONE_MODEL = 'OnePlus7'
-    PHONE_DPI = '420dpi'
-    PHONE_RESOLUTION = '1080x2260'
+    ANDROID_VERSION = 29
+    ANDROID_RELEASE = '10.0'
+    PHONE_MANUFACTURER = 'Xiaomi/xiaomi'
+    PHONE_DEVICE = 'Redmi Note 7'
+    PHONE_MODEL = 'lavender'
+    PHONE_DPI = '461dpi'
+    PHONE_RESOLUTION = '1080x2131'
     PHONE_CHIPSET = 'qcom'
-    VERSION_CODE = '131316445'
+    VERSION_CODE = '208061712'
 
     USER_AGENT_FORMAT = (
         'Instagram {app_version} Android ({android_version:d}/{android_release}; '
