@@ -24,11 +24,10 @@ class Constants(object):
     USER_AGENT_FORMAT = \
         'Instagram {app_version} Android ({android_version:d}/{android_release}; ' \
         '{dpi}; {resolution}; {brand}; {device}; {model}; {chipset}; en_US; {version_code})'
-    )
 
-    USER_AGENT_EXPRESSION = (
-        r'Instagram\s(?P<app_version>[^\s]+)\sAndroid\s\((?P<android_version>[0-9]+)/(?P<android_release>[0-9\.]+);\s'
-        r'(?P<dpi>\d+dpi);\s(?P<resolution>\d+x\d+);\s(?P<manufacturer>[^;]+);\s(?P<device>[^;]+);\s'
+    USER_AGENT_EXPRESSION = \
+        r'Instagram\s(?P<app_version>[^\s]+)\sAndroid\s\((?P<android_version>[0-9]+)/(?P<android_release>[0-9\.]+);\s' \
+        r'(?P<dpi>\d+dpi);\s(?P<resolution>\d+x\d+);\s(?P<manufacturer>[^;]+);\s(?P<device>[^;]+);\s' \
         r'(?P<model>[^;]+);\s(?P<chipset>[^;]+);\s[a-z]+_[A-Z]+;\s(?P<version_code>\d+)'
 
     USER_AGENT = USER_AGENT_FORMAT.format(**{
