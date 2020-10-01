@@ -508,17 +508,20 @@ class Client(
             'X-Bloks-Enable-RenderCore': 'false',
             'X-IG-Capabilities': self.ig_capabilities,
             'X-IG-Connection-Type': 'WIFI',
-            'X-IG-Connection-Speed': '-1kbps',
             'X-IG-Bandwidth-Speed-KBPS': str(random.randint(7000, 10000)),
             'X-IG-Bandwidth-TotalBytes-B': str(random.randint(500000, 900000)),
             'X-IG-Bandwidth-TotalTime-MS': str(random.randint(50, 150)),
+            'X-IG-Connection-Speed': '{0:d}kbps'.format(random.randint(1000, 3700)),
+            'X-IG-Android-ID': self.device_id,
+            'X-IG-Device-ID': self.uuid,
             'X-IG-App-ID': self.application_id,
             'X-IG-Bandwidth-Speed-KBPS': '-1.000',
             'X-IG-Bandwidth-TotalBytes-B': '0',
             'X-IG-Bandwidth-TotalTime-MS': '0',
             'X-FB-HTTP-Engine': Constants.FB_HTTP_ENGINE,
-            'Connection': 'close',
-            'X-IG-Prefetch-Request': 'foreground',
+            # 'Connection': 'close',
+            # 'X-IG-Prefetch-Request': 'foreground',
+            'X-Bloks-Version-Id': Constants.BLOKS_VERSION_ID,
         }
 
     @property
