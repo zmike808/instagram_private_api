@@ -98,6 +98,11 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         self.timeout = kwargs.pop('timeout', 15)
         self.on_login = kwargs.pop('on_login', None)
         self.logger = logger
+        self.checkpoint_csrftoken = kwargs.pop('checkpoint_csrftoken', None)
+        self.checkpoint_url = kwargs.pop('checkpoint_url', None)
+        self.checkpoint_headers = kwargs.pop('checkpoint_headers', None)
+        self.mode = kwargs.pop('mode', None)
+        self.code = kwargs.pop('code', None)
 
         user_settings = kwargs.pop('settings', None) or {}
         self.uuid = (
@@ -201,11 +206,24 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         self.ad_id = (
             kwargs.pop('ad_id', None) or user_settings.get('ad_id') or
             self.generate_adid())
+            
+        len_cookie = 0
 
-        if not cookie_string:   # [TODO] There's probably a better way than to depend on cookie_string
+        try:
+            len_cookie = len(cookie_string)
+        except:
+            len_cookie = 0
+        
+        if len_cookie < 1000:   # [TODO] There's probably a better way than to depend on cookie_string
             if not self.username or not self.password:
                 raise ClientLoginRequiredError('login_required', code=400)
-            self.login()
+            if self.username and self.password:
+                if self.mode and self.code:
+                    self.login_challenge(self.code)
+                if self.mode and not self.code:
+                    self.request_code()
+                if not self.mode and not self.code:
+                    self.login()
 
         self.logger.debug('USERAGENT: {0!s}'.format(self.user_agent))
         super(Client, self).__init__()

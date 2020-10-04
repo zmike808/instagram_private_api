@@ -16,6 +16,7 @@ try:
 except NameError:  # Python 2:
     class ConnectionError(Exception):
         pass
+import traceback
 
 
 class AccountsEndpointsMixin(object):
@@ -70,30 +71,40 @@ class AccountsEndpointsMixin(object):
             except compat_urllib_error.HTTPError as e:
                 response_text = json.loads(e.read().decode('utf8'))
                 checkpoint_url = response_text.get('challenge').get('url')
-                self.login_challenge(checkpoint_url, headers)
+                self.checkpoint_url = checkpoint_url
+                self.checkpoint_headers = headers
+                self.checkpoint_csrftoken = self.csrftoken
+                #self.login_challenge(checkpoint_url, headers)
                 
         except Exception as e:
             print('unhandled exception', e)
-
-    def login_challenge(self, checkpoint_url, headers):
-
+    
+    def request_code(self):
+        print(vars(self))
         try:
-            print('redirecting to ..', checkpoint_url)
-            headers['X-CSRFToken'] = self.csrftoken
-            headers['Referer'] = checkpoint_url
+            print('redirecting to ..', self.checkpoint_url)
+            self.checkpoint_headers['X-CSRFToken'] = self.checkpoint_csrftoken
+            self.checkpoint_headers['Referer'] = self.checkpoint_url
             
-            mode = int(input('Choose a challenge mode (0 - SMS, 1 - Email): '))
-            challenge_data = {'choice': mode}
+            # mode = int(input('Choose a challenge mode (0 - SMS, 1 - Email): '))
+            challenge_data = {'choice': int(self.mode)}
             data = compat_urllib_parse.urlencode(challenge_data).encode('ascii')
+
+            for k,v in self.checkpoint_headers.items():
+                print(k,v)
             
-            req = compat_urllib_request.Request(checkpoint_url, data, headers=headers)
+            req = compat_urllib_request.Request(self.checkpoint_url, data, headers=self.checkpoint_headers)
             response = self.opener.open(req, timeout=self.timeout)
 
-            code = input('Enter code received: ')
-            code_data = {'security_code': code}
+        except Exception as e:
+            print(traceback.format_exc())
+
+    def login_challenge(self, code):
+        try:
+            code_data = {'security_code': self.code}
             data = compat_urllib_parse.urlencode(code_data).encode('ascii')
 
-            req = compat_urllib_request.Request(checkpoint_url, data, headers=headers)
+            req = compat_urllib_request.Request(self.checkpoint_url, data, headers=self.checkpoint_headers)
             response = self.opener.open(req, timeout=self.timeout)
 
             if response.info().get('Content-Encoding') == 'gzip':
@@ -103,7 +114,7 @@ class AccountsEndpointsMixin(object):
                 res = response.read().decode('utf8')
     
         except compat_urllib_error.HTTPError as e:
-            print('unhandled exception', e)
+            print(traceback.format_exc())
 
     def current_user(self):
         """Get current user info"""
