@@ -80,7 +80,7 @@ class AccountsEndpointsMixin(object):
             print('unhandled exception', e)
     
     def request_code(self):
-        print(vars(self))
+
         try:
             print('redirecting to ..', self.checkpoint_url)
             self.checkpoint_headers['X-CSRFToken'] = self.checkpoint_csrftoken
@@ -89,9 +89,6 @@ class AccountsEndpointsMixin(object):
             # mode = int(input('Choose a challenge mode (0 - SMS, 1 - Email): '))
             challenge_data = {'choice': int(self.mode)}
             data = compat_urllib_parse.urlencode(challenge_data).encode('ascii')
-
-            for k,v in self.checkpoint_headers.items():
-                print(k,v)
             
             req = compat_urllib_request.Request(self.checkpoint_url, data, headers=self.checkpoint_headers)
             response = self.opener.open(req, timeout=self.timeout)
