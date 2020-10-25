@@ -387,9 +387,19 @@ class UploadEndpointsMixin(object):
         if ext in image_formats:
             return ext
         return False
-    
-    def upload_image(self, img, size, quality=80, caption='', location=None, disable_comments=False, is_sidecar=False, **kwargs) -> bool:
 
+    def upload_image(self, img, size, quality=80, caption='', location=None, disable_comments=False, story=False, **kwargs) -> bool:
+        """
+        Upload an image and post it.
+        :param img: io.BufferedReader
+        :param size: tuple of (width, height)
+        :param caption:
+        :param location: a dict of venue/location information, from :meth:`location_search`
+        or :meth:`location_fb_search`
+        :param disable_comments: bool to disable comments
+        :param story: bool to upload a story instead of a post
+        :return bool:
+        """
         is_img = self.is_image(img.name)
 
         if is_img:
@@ -457,9 +467,12 @@ class UploadEndpointsMixin(object):
                 )
 
                 res = self.opener.open(req, timeout=self.timeout)
-                post_response = self._read_response(res)
+                self._read_response(res)
 
-                self.configure(image_props['upload_id'], size, caption=caption)
+                if story:
+                    self.configure_to_reel(image_props['upload_id'], size)
+                else:
+                    self.configure(image_props['upload_id'], size, caption=caption)
 
                 return True
 
