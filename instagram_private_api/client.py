@@ -109,14 +109,14 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         user_settings = kwargs.pop('settings', None) or {}
         self.uuid = (
             kwargs.pop('guid', None) or kwargs.pop('uuid', None) or
-            user_settings.get('uuid') or self.generate_uuid(False))
+            user_settings.get('uuid') or self.generate_uuid_new())
         self.device_id = (
             kwargs.pop('device_id', None) or user_settings.get('device_id') or
-            self.generate_deviceid())
+            self.generate_device_id_new())
         # application session ID
         self.session_id = (
             kwargs.pop('session_id', None) or user_settings.get('session_id') or
-            self.generate_uuid(False))
+            self.generate_uuid_new())
         self.signature_key = (
             kwargs.pop('signature_key', None) or user_settings.get('signature_key') or
             self.IG_SIG_KEY)
@@ -237,6 +237,10 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         self.logger.debug('USERAGENT: {0!s}'.format(self.user_agent))
         super(Client, self).__init__()
 
+    def generate_device_id_new(self) -> str:
+        return "android-%s" % hashlib.md5(
+            bytes(random.randint(1, 1000))
+        ).hexdigest()[:16]
     @property
     def settings(self):
         """Helper property that extracts the settings that you should cache
@@ -249,6 +253,9 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
             'cookie': self.cookie_jar.dump(),
             'created_ts': int(time.time())
         }
+
+    def generate_uuid_new(self) -> str:
+        return str(uuid.uuid4())
 
     @property
     def user_agent(self):
@@ -372,6 +379,11 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         return self.get_cookie_value('csrftoken')
 
     @property
+    def mid(self):
+        """The client's current mid value"""
+        return self.get_cookie_value('mid')
+
+    @property
     def token(self):
         """For compatibility. Equivalent to :meth:`csrftoken`"""
         return self.csrftoken
@@ -389,7 +401,7 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
     @property
     def phone_id(self):
         """Current phone ID. For use in certain functions."""
-        return self.generate_uuid(return_hex=False, seed=self.device_id)
+        return self.generate_uuid_new()
 
     @property
     def timezone_offset(self):
@@ -417,21 +429,58 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
 
     @property
     def default_headers(self):
-        return {
-            'User-Agent': self.user_agent,
-            'Connection': 'close',
-            'Accept': '*/*',
-            'Accept-Language': 'en-US',
-            'Accept-Encoding': 'gzip, deflate',
-            'X-IG-Capabilities': self.ig_capabilities,
-            'X-IG-Connection-Type': 'WIFI',
-            'X-IG-Connection-Speed': '{0:d}kbps'.format(random.randint(1000, 5000)),
-            'X-IG-App-ID': self.application_id,
-            'X-IG-Bandwidth-Speed-KBPS': '-1.000',
-            'X-IG-Bandwidth-TotalBytes-B': '0',
-            'X-IG-Bandwidth-TotalTime-MS': '0',
-            'X-FB-HTTP-Engine': Constants.FB_HTTP_ENGINE,
-        }
+        return \
+            {
+                "X-IG-App-Locale": "en_US",
+                "X-IG-Device-Locale": "en_US",
+                "X-IG-Mapped-Locale": "en_US",
+                "X-Pigeon-Session-Id": self.generate_uuid(),
+                "X-Pigeon-Rawclienttime": str(round(time.time() * 1000) / 1000),
+                "X-IG-Connection-Speed": "-1kbps",
+                "X-IG-Bandwidth-Speed-KBPS": str(random.randint(2900000, 10000000) / 1000),
+                "X-IG-Bandwidth-TotalBytes-B": str(random.randint(5000000, 90000000)),
+                "X-IG-Bandwidth-TotalTime-MS": str(random.randint(5000, 15000)),
+                # "X-IG-EU-DC-ENABLED": "true", # <- type of DC? Eu is euro, but we use US
+                # "X-IG-Prefetch-Request": "foreground",  # OLD from instabot
+                "X-Bloks-Version-Id": hashlib.sha256(
+                    json.dumps(Constants.DEVICE_SETTINGS).encode()
+                ).hexdigest(),
+                "X-Bloks-Is-Layout-RTL": "false",
+                # "X-Bloks-Enable-RenderCore": "false",  # OLD from instabot
+                # "X-IG-WWW-Claim": "0",  # OLD from instabot
+                "X-MID": self.mid,  # "XkAyKQABAAHizpYQvHzNeBo4E9nm" in instabot
+                "X-IG-Device-ID": self.uuid,
+                "X-IG-Android-ID": self.device_id,
+                "X-IG-Connection-Type": "WIFI",
+                "X-IG-Capabilities": "3brTvwM=",  # "3brTvwE=" in instabot
+                "X-IG-App-ID": "567067343352427",
+                "X-IG-App-Startup-Country": "US",
+                "User-Agent": self.user_agent,
+                "Accept-Language": "en-US",
+                "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+                "Accept-Encoding": "gzip, deflate",
+                "Host": "i.instagram.com",
+                "X-FB-HTTP-Engine": "Liger",
+                "Connection": "keep-alive",  # "close" in instabot
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache",
+            }
+
+        # {
+        #     'User-Agent': self.user_agent,
+        #     'Connection': 'close',
+        #     'Accept': '*/*',
+        #     'Accept-Language': 'en-US',
+        #     'Accept-Encoding': 'gzip, deflate',
+        #     'X-IG-Capabilities': self.ig_capabilities,
+        #     'X-IG-Connection-Type': 'WIFI',
+        #     'X-IG-Connection-Speed': '{0:d}kbps'.format(random.randint(1000, 5000)),
+        #     'X-IG-App-ID': self.application_id,
+        #     'X-IG-Bandwidth-Speed-KBPS': '-1.000',
+        #     'X-IG-Bandwidth-TotalBytes-B': '0',
+        #     'X-IG-Bandwidth-TotalTime-MS': '0',
+        #     'X-FB-HTTP-Engine': Constants.FB_HTTP_ENGINE,
+        # }
 
     @property
     def radio_type(self):
@@ -446,7 +495,7 @@ class Client(AccountsEndpointsMixin, DiscoverEndpointsMixin, FeedEndpointsMixin,
         :return:
         """
         return hmac.new(
-            self.signature_key.encode('ascii'), data.encode('ascii'),
+            self.signature_key.encode("utf-8"), data.encode("utf-8"),
             digestmod=hashlib.sha256).hexdigest()
 
     @classmethod

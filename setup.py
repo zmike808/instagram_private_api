@@ -11,8 +11,8 @@ try:
 except ImportError:
     has_mock = False
 
-__author__ = 'ping <lastmodified@gmail.com>'
-__version__ = '1.6.0'
+__author__ = 'zmike808 <zmike808@gmail.com>'
+__version__ = '3.8.0'
 
 packages = [
     'instagram_private_api',
@@ -27,10 +27,10 @@ with io.open(path.join(path.abspath(path.dirname(__file__)), 'README.md'), encod
 setup(
     name='instagram_private_api',
     version=__version__,
-    author='ping',
-    author_email='lastmodified@gmail.com',
+    author='zmike808',
+    author_email='zmike808@gmail.com',
     license='MIT',
-    url='https://github.com/ping/instagram_private_api/tree/master',
+    url='https://github.com/zmike808/instagram_private_api/tree/master',
     install_requires=[],
     test_requires=test_reqs,
     keywords='instagram private api',
