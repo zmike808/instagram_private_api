@@ -2,24 +2,25 @@ class Constants(object):
     """https://github.com/dilame/instagram-private-api/blob/master/src/core/constants.ts"""
     """Constants holder class that stores the bulk of the fixed strings used in the library."""
 
-    IG_SIG_KEY = '9193488027538fd3450b83b7d05286d4ca9599a0f7eeed90d8c85925698a05dc'
-    IG_CAPABILITIES = '3brTvw=='
+    IG_SIG_KEY = 'a86109795736d73c9a94172cd9b736917d7d94ca61c9101164894b3f0d43bef4'
+    IG_CAPABILITIES = "3brTvwM="
     SIG_KEY_VERSION = '4'
-    APP_VERSION = '121.0.0.29.119'
+    APP_VERSION = "165.1.0.20.119"
     APPLICATION_ID = '567067343352427'
     FB_HTTP_ENGINE = 'Liger'
 
-    ANDROID_VERSION = 24
-    ANDROID_RELEASE = '7.0'
-    PHONE_MANUFACTURER = 'samsung'
-    PHONE_DEVICE = 'SM-G930F'
-    PHONE_MODEL = 'herolte'
-    PHONE_DPI = '640dpi'
-    PHONE_RESOLUTION = '1440x2560'
-    PHONE_CHIPSET = 'samsungexynos8890'
-    VERSION_CODE = '185203708'
+    ANDROID_VERSION = 27
+    ANDROID_RELEASE =  "8.1.0"
+    PHONE_MANUFACTURER = "motorola"
+    PHONE_DEVICE = "Moto G (5S)"
+    PHONE_MODEL = "montana"
+    PHONE_DPI = "480dpi"
+    PHONE_RESOLUTION = "1080x1776"
+    PHONE_CHIPSET = "qcom"
+    VERSION_CODE = "253447809"
 
-    BLOKS_VERSION_ID = '1b030ce63a06c25f3e4de6aaaf6802fe1e76401bc5ab6e5fb85ed6c2d333e0c7'
+    BLOKS_VERSION_ID = '9963ab1f03b66a2392845416b379bf71e0613103e91d03dabfc2a8b6ccd0f990'
+
 
     USER_AGENT_FORMAT = \
         'Instagram {app_version} Android ({android_version:d}/{android_release}; ' \
